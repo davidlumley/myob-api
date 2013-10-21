@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Myob::Api::VERSION
   spec.authors       = ["David Lumley"]
   spec.email         = ["david@davidlumley.com.au"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{MYOB AccountRight Live API V2}
+  spec.summary       = %q{MYOB AccountRight Live API V2}
+  spec.homepage      = "https://github.com/davidlumley/myob-api"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
