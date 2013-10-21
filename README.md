@@ -32,7 +32,7 @@ Create an api_client:
 
 Or if you know which Company File you want to access too:
 
-  api_client = Myob::Api::Client.new({
+    api_client = Myob::Api::Client.new({
       :consumer => {
         :key    => YOUR_CONSUMER_KEY,
         :secret => YOUR_CONSUMER_SECRET,
