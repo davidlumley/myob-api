@@ -5,10 +5,6 @@ module Myob
         def model_route
           ''
         end
-
-        def select(guid)
-          @client.company_file_guid = guid
-        end
       end
     end
   end

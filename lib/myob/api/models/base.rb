@@ -22,7 +22,7 @@ module Myob
           if self.model_route == ''
             "#{API_URL}"
           else
-            "#{API_URL}#{@client.company_file_guid}/#{self.model_route}"
+            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}"
           end
         end
 
