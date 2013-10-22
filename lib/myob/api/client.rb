@@ -12,14 +12,13 @@ module Myob
         model :Contact
         model :Customer
 
-        @consumer     = options[:consumer]
-        @access_token = options[:access_token]
-        @client       = OAuth2::Client.new(@consumer[:key], @consumer[:secret])
+        @consumer             = options[:consumer]
+        @access_token         = options[:access_token]
+        @current_company_file = {}
+        @client               = OAuth2::Client.new(@consumer[:key], @consumer[:secret])
 
         if options[:company_file]
           @current_company_file = select_company_file(options[:company_file])
-        else
-          @current_company_file = {}
         end
       end
 
