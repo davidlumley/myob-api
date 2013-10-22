@@ -14,12 +14,13 @@ module Myob
 
         @consumer     = options[:consumer]
         @access_token = options[:access_token]
+        @client       = OAuth2::Client.new(@consumer[:key], @consumer[:secret])
+
         if options[:company_file]
           @current_company_file = select_company_file(options[:company_file])
         else
           @current_company_file = {}
         end
-        @client       = OAuth2::Client.new(@consumer[:key], @consumer[:secret])
       end
 
       def headers
@@ -31,8 +32,9 @@ module Myob
       end
 
       def select_company_file(company_file)
+        company_file_id = self.company_file.first('Name' => company_file[:name])['Id']
         @current_company_file = {
-          :id    => company_file[:id],
+          :id    => company_file_id,
           :token => Base64.encode64("#{company_file[:username]}:#{company_file[:password]}"),
         }
       end

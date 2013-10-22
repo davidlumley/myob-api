@@ -14,8 +14,18 @@ module Myob
           @model_name.to_s
         end
 
-        def all
-          parse_response(@client.connection.get(self.url, {:headers => @client.headers}))
+        def all(query = nil)
+          model_data = parse_response(@client.connection.get(self.url, {:headers => @client.headers}))
+          if query
+            return process_query(model_data, query)
+          else
+            return model_data
+          end
+        end
+
+        def first(query = nil)
+          model_data = self.all(query)
+          model_data[0] if model_data.length > 0
         end
 
         def url
@@ -30,6 +40,13 @@ module Myob
 
         def parse_response(response)
           JSON.parse(response.body)
+        end
+
+        def process_query(data, query)
+          query.each do |property, value|
+            data.select!{|x| x[property] == value}
+          end
+          data
         end
 
       end

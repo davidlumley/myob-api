@@ -39,7 +39,7 @@ Or if you know which Company File you want to access too:
       },
       :access_token => YOUR_OAUTH_ACCESS_TOKEN,
       :company_file => {
-        :id       => COMPANY_FILE_ID,
+        :name     => COMPANY_FILE_NAME,
         :username => COMPANY_FILE_USERNAME,
         :password => COMPANY_FILE_PASSWORD,
       },
