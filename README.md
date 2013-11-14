@@ -30,6 +30,17 @@ Create an api_client:
       :access_token => YOUR_OAUTH_ACCESS_TOKEN,
     })
 
+If you have a refresh token (the Myob API returns one by default) you can use that too:
+
+    api_client = Myob::Api::Client.new({
+      :consumer => {
+        :key    => YOUR_CONSUMER_KEY,
+        :secret => YOUR_CONSUMER_SECRET,
+      },
+      :access_token  => YOUR_OAUTH_ACCESS_TOKEN,
+      :refresh_token => YOUR_OAUTH_REFRESH_TOKEN,
+    })
+
 Or if you know which Company File you want to access too:
 
     api_client = Myob::Api::Client.new({
@@ -37,8 +48,9 @@ Or if you know which Company File you want to access too:
         :key    => YOUR_CONSUMER_KEY,
         :secret => YOUR_CONSUMER_SECRET,
       },
-      :access_token => YOUR_OAUTH_ACCESS_TOKEN,
-      :company_file => {
+      :access_token  => YOUR_OAUTH_ACCESS_TOKEN,
+      :refresh_token => YOUR_OAUTH_REFRESH_TOKEN,
+      :company_file  => {
         :name     => COMPANY_FILE_NAME,
         :username => COMPANY_FILE_USERNAME,
         :password => COMPANY_FILE_PASSWORD,
