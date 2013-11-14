@@ -1,11 +1,12 @@
 require 'Base64'
+require 'oauth2'
 
 module Myob
   module Api
     class Client
       include Myob::Api::Helpers
 
-      attr_reader :current_company_file
+      attr_reader :current_company_file, :client
 
       def initialize(options)
         model :CompanyFile
@@ -14,8 +15,13 @@ module Myob
 
         @consumer             = options[:consumer]
         @access_token         = options[:access_token]
+        @refresh_token        = options[:refresh_token]
         @current_company_file = {}
-        @client               = OAuth2::Client.new(@consumer[:key], @consumer[:secret])
+        @client               = OAuth2::Client.new(@consumer[:key], @consumer[:secret], {
+          :site          => 'https://secure.myob.com',
+          :authorize_url => '/oauth2/account/authorize',
+          :token_url     => '/oauth2/v1/authorize',
+        })
 
         if options[:company_file]
           @current_company_file = select_company_file(options[:company_file])
@@ -39,8 +45,15 @@ module Myob
       end
 
       def connection
-        @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token)
+        if @refresh_token
+          @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token, {
+            :refresh_token => @refresh_token
+          }).refresh!
+        else
+          @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token)
+        end
       end
+
     end
   end
 end
