@@ -12,11 +12,13 @@ module Myob
         model :CompanyFile
         model :Contact
         model :Customer
+        model :Employee
 
+        @redirect_uri         = options[:redirect_uri]
         @consumer             = options[:consumer]
         @access_token         = options[:access_token]
         @refresh_token        = options[:refresh_token]
-        @current_company_file = {}
+        @current_company_file = options[:selected_company_file] || {}
         @client               = OAuth2::Client.new(@consumer[:key], @consumer[:secret], {
           :site          => 'https://secure.myob.com',
           :authorize_url => '/oauth2/account/authorize',
@@ -26,6 +28,18 @@ module Myob
         if options[:company_file]
           @current_company_file = select_company_file(options[:company_file])
         end
+      end
+
+      def get_access_code_url(params = {})
+        @client.auth_code.authorize_url(params.merge(scope: "CompanyFile", redirect_uri: @redirect_uri))
+      end
+
+      def get_access_token(access_code)
+        @token = @client.auth_code.get_token(access_code, redirect_uri: @redirect_uri)
+        @access_token = @token.token
+        @expires_at = @token.expires_at
+        @refresh_token = @token.refresh_token
+        @token
       end
 
       def headers
