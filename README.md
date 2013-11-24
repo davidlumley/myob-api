@@ -135,3 +135,7 @@ Return a list of all customers (a subset of contacts)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/davidlumley/myob-api/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
