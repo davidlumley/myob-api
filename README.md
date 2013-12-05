@@ -116,7 +116,7 @@ Return a list of all customers (a subset of contacts)
 
 #### Employees
 
-Return a list of all customers (a subset of contacts)
+Return a list of all employees
 
     api_client.employee.all
 
