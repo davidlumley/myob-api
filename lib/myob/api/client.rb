@@ -10,9 +10,13 @@ module Myob
 
       def initialize(options)
         model :CompanyFile
+
         model :Contact
         model :Customer
         model :Employee
+
+        model :PayrollCategory
+        model :Wage
 
         @redirect_uri         = options[:redirect_uri]
         @consumer             = options[:consumer]
