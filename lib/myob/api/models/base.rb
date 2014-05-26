@@ -23,6 +23,10 @@ module Myob
           end
         end
 
+        def get(query = nil)
+          all(query)
+        end
+
         def first(query = nil)
           model_data = self.all(query)
           model_data[0] if model_data.length > 0
