@@ -38,13 +38,13 @@ module Myob
       end
 
       def get_access_code_url(params = {})
-        @client.auth_code.authorize_url(params.merge(scope: "CompanyFile", redirect_uri: @redirect_uri))
+        @client.auth_code.authorize_url(params.merge(scope: 'CompanyFile', redirect_uri: @redirect_uri))
       end
 
       def get_access_token(access_code)
-        @token = @client.auth_code.get_token(access_code, redirect_uri: @redirect_uri)
-        @access_token = @token.token
-        @expires_at = @token.expires_at
+        @token         = @client.auth_code.get_token(access_code, redirect_uri: @redirect_uri)
+        @access_token  = @token.token
+        @expires_at    = @token.expires_at
         @refresh_token = @token.refresh_token
         @token
       end

@@ -18,6 +18,33 @@ Or install it yourself as:
 
 ## Usage
 
+### OAuth Authentication
+
+If you've already got an OAuth access token, feel free to skip to API Client Setup.
+
+The MYOB API uses 3 legged OAuth2. If you don't want to roll your own, or use the [OmniAuth strategy](https://github.com/davidlumley/omniauth-myob) you can authenticate using the `get_access_code_url` and `get_access_token` methods that [ghiculescu](https://github.com/ghiculescu) has provided like so:
+
+    class MYOBSessionController  
+      def new
+        redirect_to myob_client.get_access_code_url
+      end
+
+      def create
+        @token         = myob_client.get_access_token(params[:code])
+        @company_files = myob_client.company_file.all
+        # then show the user a view where they can log in to their company file
+      end
+
+      def myob_client
+        @api_client = Myob::Api::Client.new({
+          :consumer => {
+            :key    => YOUR_CONSUMER_KEY,
+            :secret => YOUR_CONSUMER_SECRET,
+          },
+        })
+      end
+    end
+
 ### API Client Setup
 
 Create an api_client:
@@ -87,6 +114,12 @@ Return a list of all customers (a subset of contacts)
 
     api_client.customer.all
 
+#### Employees
+
+Return a list of all employees
+
+    api_client.employee.all
+
 
 ## Todo
 
@@ -102,3 +135,7 @@ Return a list of all customers (a subset of contacts)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/davidlumley/myob-api/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
