@@ -14,9 +14,12 @@ module Myob
         model :Contact
         model :Customer
         model :Employee
+        model :EmployeePayrollDetail
 
         model :PayrollCategory
         model :Wage
+
+        model :Timesheet
 
         @redirect_uri         = options[:redirect_uri]
         @consumer             = options[:consumer]
