@@ -36,11 +36,11 @@ module Myob
           new_record?(object) ? create(object) : update(object)
         end
 
-        def url(object_uid = nil)
+        def url(object = nil)
           if self.model_route == ''
             "#{API_URL}"
           else
-            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}#{"/#{object_uid}" if object_uid}"
+            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}#{"/#{object['UID']}" if object && object['UID']}"
           end
         end
 
@@ -48,15 +48,38 @@ module Myob
           object["UID"].nil? || object["UID"] == ""
         end
 
+        protected
+        def date_fields
+          []
+        end
+
         private
         def create(object)
+          object = typecast(object)
           response = @client.connection.post(self.url, {:headers => @client.headers, :body => object.to_json})
           response.status == 201
         end
 
         def update(object)
-          response = @client.connection.put(self.url(object['UID']), {:headers => @client.headers, :body => object.to_json})
+          object = typecast(object)
+          response = @client.connection.put(self.url(object), {:headers => @client.headers, :body => object.to_json})
           response.status == 200
+        end
+
+        def typecast(object)
+          returned_object = object.dup # don't change the original object
+
+          date_fields.each do |field|
+            if returned_object[field].respond_to?(:stftime)
+              returned_object[field] = returned_object[field].strftime(date_formatter)
+            end
+          end
+
+          returned_object
+        end
+
+        def date_formatter
+          "%Y-%m-%dT%H:%M:%S"
         end
 
         def parse_response(response)
