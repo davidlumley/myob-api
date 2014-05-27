@@ -32,15 +32,32 @@ module Myob
           model_data[0] if model_data.length > 0
         end
 
-        def url
+        def save(object)
+          new_record?(object) ? create(object) : update(object)
+        end
+
+        def url(object_uid = nil)
           if self.model_route == ''
             "#{API_URL}"
           else
-            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}"
+            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}#{"/#{object_uid}" if object_uid}"
           end
         end
 
+        def new_record?(object)
+          object["UID"].nil? || object["UID"] == ""
+        end
+
         private
+        def create(object)
+          response = @client.connection.post(self.url, {:headers => @client.headers, :body => object.to_json})
+          response.status == 201
+        end
+
+        def update(object)
+          response = @client.connection.put(self.url(object['UID']), {:headers => @client.headers, :body => object.to_json})
+          response.status == 200
+        end
 
         def parse_response(response)
           JSON.parse(response.body)
@@ -48,7 +65,7 @@ module Myob
 
         def process_query(data, query)
           query.each do |property, value|
-            data.select!{|x| x[property] == value}
+            data.select! {|x| x[property] == value}
           end
           data
         end
