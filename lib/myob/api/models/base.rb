@@ -48,11 +48,6 @@ module Myob
           object["UID"].nil? || object["UID"] == ""
         end
 
-        protected
-        def date_fields
-          []
-        end
-
         private
         def create(object)
           object = typecast(object)
@@ -69,9 +64,9 @@ module Myob
         def typecast(object)
           returned_object = object.dup # don't change the original object
 
-          date_fields.each do |field|
-            if returned_object[field].respond_to?(:stftime)
-              returned_object[field] = returned_object[field].strftime(date_formatter)
+          returned_object.each do |key, value|
+            if value.respond_to?(:strftime)
+              returned_object[key] = value.strftime(date_formatter)
             end
           end
 

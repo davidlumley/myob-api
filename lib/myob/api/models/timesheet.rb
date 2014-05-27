@@ -6,10 +6,6 @@ module Myob
           'Payroll/Timesheet'
         end
 
-        def date_fields
-          ['StartDate', 'EndDate']
-        end
-
         # http://developer.myob.com/api/accountright/v2/payroll/timesheet/
         # we always want to PUT timesheets, so they are never a "new" record
         def new_record?(object)

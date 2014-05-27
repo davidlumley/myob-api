@@ -86,11 +86,11 @@ Or if you know which Company File you want to access too:
 
 ### API Methods
 
-Before using the majority of API methods you will need to have selected a Company File. If you've already selected one when creating the client, feel free to ignore this.
-
 #### Company Files
 
-Return a list of company files
+Before using the majority of API methods you will need to have selected a Company File. If you've already selected one when creating the client, feel free to ignore this.
+
+Return a list of company files:
 
     api_client.company_file.all
 
@@ -119,6 +119,20 @@ Return a list of all customers (a subset of contacts)
 Return a list of all employees
 
     api_client.employee.all
+
+#### Creating an entity
+
+To create a new entity, call #save on its model, passing through a hash that represents the entity. Refer to the MYOB API documentation for required fields.
+
+    api_client.employee.save({'FirstName' => 'John', 'LastName' => 'Smith', 'IsIndividual' => true})
+
+#### Updating an entity
+
+To update an existing entity, call #save on its model, passing through a hash you got from the API. This hash should include a `UID` parameter (which is included by default when you get the data).
+  
+    user = api_client.employee.all["Items"].last
+    user['FirstName'] = 'New First Name'
+    api_client.employee.save(user)
 
 
 ## Todo
