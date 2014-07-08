@@ -32,15 +32,50 @@ module Myob
           model_data[0] if model_data.length > 0
         end
 
-        def url
+        def save(object)
+          new_record?(object) ? create(object) : update(object)
+        end
+
+        def url(object = nil)
           if self.model_route == ''
             "#{API_URL}"
           else
-            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}"
+            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}#{"/#{object['UID']}" if object && object['UID']}"
           end
         end
 
+        def new_record?(object)
+          object["UID"].nil? || object["UID"] == ""
+        end
+
         private
+        def create(object)
+          object = typecast(object)
+          response = @client.connection.post(self.url, {:headers => @client.headers, :body => object.to_json})
+          response.status == 201
+        end
+
+        def update(object)
+          object = typecast(object)
+          response = @client.connection.put(self.url(object), {:headers => @client.headers, :body => object.to_json})
+          response.status == 200
+        end
+
+        def typecast(object)
+          returned_object = object.dup # don't change the original object
+
+          returned_object.each do |key, value|
+            if value.respond_to?(:strftime)
+              returned_object[key] = value.strftime(date_formatter)
+            end
+          end
+
+          returned_object
+        end
+
+        def date_formatter
+          "%Y-%m-%dT%H:%M:%S"
+        end
 
         def parse_response(response)
           JSON.parse(response.body)
@@ -48,7 +83,7 @@ module Myob
 
         def process_query(data, query)
           query.each do |property, value|
-            data.select!{|x| x[property] == value}
+            data.select! {|x| x[property] == value}
           end
           data
         end
