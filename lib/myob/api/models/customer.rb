@@ -1,7 +1,7 @@
 module Myob
   module Api
     module Model
-      class Customer < Myob::Api::Model::Base
+      class Customer < Base
         def model_route
           'Contact/Customer'
         end

@@ -1,7 +1,7 @@
 module Myob
   module Api
     module Model
-      class EmployeePayrollDetail < Myob::Api::Model::Base
+      class EmployeePayrollDetail < Base
         def model_route
           'Contact/EmployeePayrollDetails'
         end

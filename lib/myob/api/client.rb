@@ -11,6 +11,8 @@ module Myob
       def initialize(options)
         model :CompanyFile
 
+        model :Company
+
         model :Contact
         model :Customer
         model :Employee
@@ -62,7 +64,7 @@ module Myob
         company_file_id = self.company_file.first('Name' => company_file[:name])['Id']
         @current_company_file = {
           :id    => company_file_id,
-          :token => Base64.encode64("#{company_file[:username]}:#{company_file[:password]}"),
+          :token => company_file[:token] || Base64.encode64("#{company_file[:username]}:#{company_file[:password]}"),
         }
       end
 
