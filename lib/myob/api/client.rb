@@ -38,11 +38,11 @@ module Myob
       end
 
       def get_access_code_url(params = {})
-        @client.auth_code.authorize_url(params.merge(scope: 'CompanyFile', redirect_uri: @redirect_uri))
+        @client.auth_code.authorize_url(params.merge(:scope => 'CompanyFile', :redirect_uri => @redirect_uri))
       end
 
       def get_access_token(access_code)
-        @token         = @client.auth_code.get_token(access_code, redirect_uri: @redirect_uri)
+        @token         = @client.auth_code.get_token(access_code, :redirect_uri => @redirect_uri)
         @access_token  = @token.token
         @expires_at    = @token.expires_at
         @refresh_token = @token.refresh_token
@@ -59,7 +59,7 @@ module Myob
       end
 
       def select_company_file(company_file)
-        company_file_id = self.company_file.first('Name' => company_file[:name])['Id']
+        company_file_id = self.company_file.first(:filter => { 'Name' => company_file[:name]})['Id']
         @current_company_file = {
           :id    => company_file_id,
           :token => Base64.encode64("#{company_file[:username]}:#{company_file[:password]}"),
@@ -68,9 +68,9 @@ module Myob
 
       def connection
         if @refresh_token
-          @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token, {
+          @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token,
             :refresh_token => @refresh_token
-          }).refresh!
+          ).refresh!
         else
           @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token)
         end

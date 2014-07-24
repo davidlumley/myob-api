@@ -4,6 +4,7 @@ module Myob
       class Base
 
         API_URL = 'https://api.myob.com/accountright/'
+        QUERY_OPTIONS = [:orderby, :top, :skip, :filter]
 
         def initialize(client, model_name)
           @client     = client
@@ -14,34 +15,38 @@ module Myob
           @model_name.to_s
         end
 
-        def all(query = nil)
-          model_data = parse_response(@client.connection.get(self.url, {:headers => @client.headers}))
-          if query
-            return process_query(model_data, query)
-          else
-            return model_data
-          end
+        def all(params = nil)
+          response = parse_response(@client.connection.get(self.url(nil, params), :headers => @client.headers))
+          response.is_a?(Hash) && response.key?('Items') ? response['Items'] : response
         end
 
-        def get(query = nil)
-          all(query)
+        alias_method :get, :all
+
+        def first(params = nil)
+          all(params).first
         end
 
-        def first(query = nil)
-          model_data = self.all(query)
-          model_data[0] if model_data.length > 0
+        def find(uid)
+          parse_response(@client.connection.get(self.url('UID' => uid), :headers => @client.headers))
         end
 
         def save(object)
           new_record?(object) ? create(object) : update(object)
         end
 
-        def url(object = nil)
-          if self.model_route == ''
+        def url(object = nil, params = nil)
+          url = if self.model_route == ''
             "#{API_URL}"
           else
             "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}#{"/#{object['UID']}" if object && object['UID']}"
           end
+
+          if params.is_a?(Hash)
+            query = query_string(params)
+            url += "?#{query}" if query.present?
+          end
+
+          url
         end
 
         def new_record?(object)
@@ -49,15 +54,16 @@ module Myob
         end
 
         private
+
         def create(object)
           object = typecast(object)
-          response = @client.connection.post(self.url, {:headers => @client.headers, :body => object.to_json})
+          response = @client.connection.post(self.url, :headers => @client.headers, :body => object.to_json)
           response.status == 201
         end
 
         def update(object)
           object = typecast(object)
-          response = @client.connection.put(self.url(object), {:headers => @client.headers, :body => object.to_json})
+          response = @client.connection.put(self.url(object), :headers => @client.headers, :body => object.to_json)
           response.status == 200
         end
 
@@ -81,11 +87,21 @@ module Myob
           JSON.parse(response.body)
         end
 
-        def process_query(data, query)
-          query.each do |property, value|
-            data.select! {|x| x[property] == value}
-          end
-          data
+        def query_string(params)
+          params.map do |key, value|
+            if QUERY_OPTIONS.include? key
+              value = build_filter(value) if key == :filter
+              key = "$#{key}"
+            end
+
+            "#{key}=#{CGI.escape(value.to_s)}"
+          end.join '&'
+        end
+
+        def build_filter(value)
+          return value unless value.is_a? Hash
+
+          value.map { |key, value| "#{key} eq '#{value.to_s.gsub("'", %q(\\\'))}'" }.join ' and '
         end
 
       end
