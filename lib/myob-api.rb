@@ -10,6 +10,8 @@ require 'myob/api/models/customer'
 require 'myob/api/models/employee'
 require 'myob/api/models/employee_payroll_details'
 
+require 'myob/api/models/invoice'
+
 require 'myob/api/models/payroll_category'
 require 'myob/api/models/wage'
 
