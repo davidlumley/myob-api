@@ -36,6 +36,10 @@ module Myob
           new_record?(object) ? create(object) : update(object)
         end
 
+        def destroy(object)
+          @client.connection.delete(self.url(object), :headers => @client.headers)
+        end
+
         def url(object = nil)
           if self.model_route == ''
             "#{API_URL}"
