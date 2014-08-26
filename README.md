@@ -120,6 +120,12 @@ Return a list of all employees
 
     api_client.employee.all
 
+#### Invoices
+
+Return a list of all invoices
+
+    api_client.invoice.all
+
 #### Creating an entity
 
 To create a new entity, call #save on its model, passing through a hash that represents the entity. Refer to the MYOB API documentation for required fields.
