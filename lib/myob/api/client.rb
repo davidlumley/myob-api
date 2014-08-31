@@ -17,9 +17,11 @@ module Myob
         model :Customer
         model :Employee
         model :EmployeePayrollDetail
-        
+
+        model :EmployeePayrollAdvice
+
         model :Invoice
-        
+
         model :PayrollCategory
         model :Wage
 
