@@ -31,7 +31,12 @@ module Myob
         def get(query = nil)
           all(query)
         end
-
+        
+        def find(id)
+          object = { 'UID' => id }
+          perform_request(self.url(object))
+        end
+        
         def first(query = nil)
           model_data = self.all(query)
           model_data[0] if model_data.length > 0
