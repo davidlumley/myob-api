@@ -126,6 +126,19 @@ Return a list of all invoices
 
     api_client.invoice.all
 
+#### Pagination
+
+Basic pagination based on `NextPageLink` parameter returned via [API](http://developer.myob.com/api/accountright/api-overview/retrieving-data/)
+
+    first_page = api_client.contact.all
+    second_page = api_client.next_page if api_client.next_page?
+
+#### Fetching one entity
+
+Return an entity with given `UID`:
+
+    contact = api_client.contact.find(contact_uid)
+
 #### Creating an entity
 
 To create a new entity, call #save on its model, passing through a hash that represents the entity. Refer to the MYOB API documentation for required fields.
