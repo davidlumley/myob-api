@@ -11,6 +11,8 @@ module Myob
       def initialize(options)
         model :CompanyFile
 
+        model :CurrentUser
+
         model :Contact
         model :Customer
         model :Employee
