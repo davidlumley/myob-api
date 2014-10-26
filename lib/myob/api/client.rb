@@ -23,6 +23,8 @@ module Myob
 
         model :Timesheet
 
+        model :EmployeePayrollAdvice
+
         @redirect_uri         = options[:redirect_uri]
         @consumer             = options[:consumer]
         @access_token         = options[:access_token]
