@@ -56,13 +56,11 @@ module Myob
         def create(object)
           object = typecast(object)
           response = @client.connection.post(self.url, {:headers => @client.headers, :body => object.to_json})
-          response.status == 201
         end
 
         def update(object)
           object = typecast(object)
           response = @client.connection.put(self.url(object), {:headers => @client.headers, :body => object.to_json})
-          response.status == 200
         end
 
         def typecast(object)
