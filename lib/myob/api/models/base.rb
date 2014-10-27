@@ -4,7 +4,6 @@ module Myob
       class Base
 
         API_URL = 'https://api.myob.com/accountright/'
-        PAGE_SIZE = 400
 
         def initialize(client, model_name)
           @client          = client
@@ -56,7 +55,7 @@ module Myob
           elsif object && object['UID']
             "#{resource_url}/#{object['UID']}"
           else
-            "#{resource_url}?$top=#{PAGE_SIZE}"
+            resource_url
           end
         end
 
