@@ -1,7 +1,7 @@
 module Myob
   module Api
     module Model
-      class InvoiceItem < Myob::Api::Model::Base
+      class InvoiceItem < Base
         def model_route
           'Sale/Invoice/Item'
         end
