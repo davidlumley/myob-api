@@ -1,7 +1,7 @@
 module Myob
   module Api
     module Model
-      class PayrollCategory < Myob::Api::Model::Base
+      class PayrollCategory < Base
         def model_route
           'Payroll/PayrollCategory'
         end

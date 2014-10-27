@@ -120,6 +120,12 @@ Return a list of all employees
 
     api_client.employee.all
 
+#### Invoices
+
+Return a list of all invoices
+
+    api_client.invoice.all
+
 #### Creating an entity
 
 To create a new entity, call #save on its model, passing through a hash that represents the entity. Refer to the MYOB API documentation for required fields.
@@ -149,7 +155,3 @@ To update an existing entity, call #save on its model, passing through a hash yo
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
-
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/davidlumley/myob-api/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-

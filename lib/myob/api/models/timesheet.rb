@@ -1,7 +1,7 @@
 module Myob
   module Api
     module Model
-      class Timesheet < Myob::Api::Model::Base
+      class Timesheet < Base
         def model_route
           'Payroll/Timesheet'
         end

@@ -1,7 +1,7 @@
 module Myob
   module Api
     module Model
-      class CompanyFile < Myob::Api::Model::Base
+      class CompanyFile < Base
         def model_route
           ''
         end

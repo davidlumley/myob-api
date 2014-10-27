@@ -1,7 +1,7 @@
 module Myob
   module Api
     module Model
-      class Contact < Base
+      class Company < Base
       end
     end
   end
