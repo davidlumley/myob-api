@@ -27,6 +27,14 @@ module Myob
           perform_request(@next_page_link, query)
         end
 
+        def all_items(query = nil)
+          results = all(query)["Items"]
+          while next_page?
+            results += next_page(query)["Items"] || []
+          end
+          results
+        end
+
         def get(query = nil)
           all(query)
         end

@@ -133,6 +133,10 @@ Basic pagination based on `NextPageLink` parameter returned via [API](http://dev
     first_page = api_client.contact.all
     second_page = api_client.contact.next_page if api_client.contact.next_page?
 
+You can also get an array of all items (which may make several API calls in the background):
+
+    api_client.contact.all_items # note this returns an array, *not* a hash the way `api_client.contact.all` does
+
 #### Fetching one entity
 
 Return an entity with given `UID`:
