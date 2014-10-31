@@ -6,8 +6,9 @@ module Myob
         API_URL = 'https://api.myob.com/accountright/'
 
         def initialize(client, model_name)
-          @client     = client
-          @model_name = model_name || 'Base'
+          @client          = client
+          @model_name      = model_name || 'Base'
+          @next_page_link  = nil
         end
 
         def model_route
@@ -15,18 +16,26 @@ module Myob
         end
 
         def all(query = nil)
-          model_data = parse_response(@client.connection.get(self.url, {:headers => @client.headers}))
-          if query
-            return process_query(model_data, query)
-          else
-            return model_data
-          end
+          perform_request(self.url, query)
+        end
+        
+        def next_page?
+          !!@next_page_link
+        end
+        
+        def next_page(query = nil)
+          perform_request(@next_page_link, query)
         end
 
         def get(query = nil)
           all(query)
         end
-
+        
+        def find(id)
+          object = { 'UID' => id }
+          perform_request(self.url(object))
+        end
+        
         def first(query = nil)
           model_data = self.all(query)
           model_data[0] if model_data.length > 0
@@ -43,8 +52,10 @@ module Myob
         def url(object = nil)
           if self.model_route == ''
             "#{API_URL}"
+          elsif object && object['UID']
+            "#{resource_url}/#{object['UID']}"
           else
-            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}#{"/#{object['UID']}" if object && object['UID']}"
+            resource_url
           end
         end
 
@@ -77,6 +88,21 @@ module Myob
 
         def date_formatter
           "%Y-%m-%dT%H:%M:%S"
+        end
+        
+        def resource_url
+          "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}"
+        end
+        
+        def perform_request(url, query = nil)
+          model_data = parse_response(@client.connection.get(url, {:headers => @client.headers}))
+          @next_page_link = model_data['NextPageLink'] if self.model_route != ''
+          
+          if query
+            process_query(model_data, query)
+          else
+            model_data
+          end
         end
 
         def parse_response(response)
