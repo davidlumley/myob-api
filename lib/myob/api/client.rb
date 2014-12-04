@@ -16,6 +16,7 @@ module Myob
 
         model :Contact
         model :Customer
+        model :Supplier
         model :Employee
         model :EmployeePayrollDetail
 
@@ -30,6 +31,8 @@ module Myob
         model :Timesheet
 
         model :EmployeePayrollAdvice
+
+        model :TaxCode
 
         @redirect_uri         = options[:redirect_uri]
         @consumer             = options[:consumer]

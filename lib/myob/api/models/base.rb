@@ -99,7 +99,7 @@ module Myob
         end
         
         def resource_url
-          "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}"
+          "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}/"
         end
         
         def perform_request(url, query = nil)
