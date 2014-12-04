@@ -10,6 +10,7 @@ require 'myob/api/models/current_user'
 
 require 'myob/api/models/contact'
 require 'myob/api/models/customer'
+require 'myob/api/models/supplier'
 require 'myob/api/models/employee'
 require 'myob/api/models/employee_payroll_details'
 require 'myob/api/models/employee_standard_pay'
@@ -24,6 +25,6 @@ require 'myob/api/models/wage'
 
 require 'myob/api/models/timesheet'
 
-require 'myob/api/models/employee_payroll_advice'
+require 'myob/api/models/tax_code'
 
 require 'myob/api/client'
