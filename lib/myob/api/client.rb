@@ -34,6 +34,7 @@ module Myob
         model :EmployeePayrollAdvice
 
         model :TaxCode
+        model :Account
 
         @redirect_uri         = options[:redirect_uri]
         @consumer             = options[:consumer]
