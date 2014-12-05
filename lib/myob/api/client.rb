@@ -22,6 +22,8 @@ module Myob
 
         model :EmployeePayrollAdvice
 
+        model :InventoryItem
+
         model :Invoice
         model :InvoiceItem
 
