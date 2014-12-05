@@ -73,11 +73,13 @@ module Myob
 
         private
         def create(object)
+puts "POST REQUEST: #{url} - #{object.to_json}"
           object = typecast(object)
           response = @client.connection.post(self.url, {:headers => @client.headers, :body => object.to_json})
         end
 
         def update(object)
+puts "PUT REQUEST: #{url} - #{object.to_json}"
           object = typecast(object)
           response = @client.connection.put(self.url(object), {:headers => @client.headers, :body => object.to_json})
         end
@@ -103,6 +105,7 @@ module Myob
         end
         
         def perform_request(url, query = nil)
+puts "PERFORM REQUEST: #{url}"
           model_data = parse_response(@client.connection.get(url, {:headers => @client.headers}))
           @next_page_link = model_data['NextPageLink'] if self.model_route != ''
 
@@ -114,6 +117,7 @@ module Myob
         end
 
         def parse_response(response)
+puts "RESPONSE #{response.body}"
           JSON.parse(response.body)
         end
 
