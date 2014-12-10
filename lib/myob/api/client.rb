@@ -18,6 +18,7 @@ module Myob
         model :Customer
         model :Employee
         model :EmployeePayrollDetail
+        model :EmployeeStandardPay
 
         model :EmployeePayrollAdvice
 

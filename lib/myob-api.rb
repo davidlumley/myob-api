@@ -12,6 +12,7 @@ require 'myob/api/models/contact'
 require 'myob/api/models/customer'
 require 'myob/api/models/employee'
 require 'myob/api/models/employee_payroll_details'
+require 'myob/api/models/employee_standard_pay'
 
 require 'myob/api/models/employee_payroll_advice'
 
