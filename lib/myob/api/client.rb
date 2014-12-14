@@ -18,6 +18,8 @@ module Myob
         model :Customer
         model :Supplier
         model :Employee
+        model :CustomerPayment
+        model :SupplierPayment
         model :EmployeePayrollDetail
         model :EmployeeStandardPay
 
@@ -27,6 +29,9 @@ module Myob
 
         model :Invoice
         model :InvoiceItem
+
+        model :Order
+        model :OrderItem
 
         model :PayrollCategory
         model :Wage
@@ -83,11 +88,19 @@ module Myob
         }
       end
 
+      def refresh!
+        @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token, {
+          :refresh_token => @refresh_token
+        })
+
+        @auth_connection.refresh!
+      end
+
       def connection
         if @refresh_token
           @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token, {
             :refresh_token => @refresh_token
-          }).refresh!
+          })
         else
           @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token)
         end

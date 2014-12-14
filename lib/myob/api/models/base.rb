@@ -61,7 +61,7 @@ module Myob
           if self.model_route == ''
             "#{API_URL}"
           elsif object && object['UID']
-            "#{resource_url}/#{object['UID']}"
+            "#{resource_url}#{object['UID']}"
           else
             resource_url
           end
@@ -73,13 +73,11 @@ module Myob
 
         private
         def create(object)
-puts "POST REQUEST: #{url} - #{object.to_json}"
           object = typecast(object)
           response = @client.connection.post(self.url, {:headers => @client.headers, :body => object.to_json})
         end
 
         def update(object)
-puts "PUT REQUEST: #{url} - #{object.to_json}"
           object = typecast(object)
           response = @client.connection.put(self.url(object), {:headers => @client.headers, :body => object.to_json})
         end
@@ -105,7 +103,6 @@ puts "PUT REQUEST: #{url} - #{object.to_json}"
         end
         
         def perform_request(url, query = nil)
-puts "PERFORM REQUEST: #{url}"
           model_data = parse_response(@client.connection.get(url, {:headers => @client.headers}))
           @next_page_link = model_data['NextPageLink'] if self.model_route != ''
 
@@ -117,7 +114,6 @@ puts "PERFORM REQUEST: #{url}"
         end
 
         def parse_response(response)
-puts "RESPONSE #{response.body}"
           JSON.parse(response.body)
         end
 

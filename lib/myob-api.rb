@@ -10,7 +10,9 @@ require 'myob/api/models/current_user'
 
 require 'myob/api/models/contact'
 require 'myob/api/models/customer'
+require 'myob/api/models/customer_payment'
 require 'myob/api/models/supplier'
+require 'myob/api/models/supplier_payment'
 require 'myob/api/models/employee'
 require 'myob/api/models/employee_payroll_details'
 require 'myob/api/models/employee_standard_pay'
@@ -21,6 +23,9 @@ require 'myob/api/models/inventory_item'
 
 require 'myob/api/models/invoice'
 require 'myob/api/models/invoice_item'
+
+require 'myob/api/models/order'
+require 'myob/api/models/order_item'
 
 require 'myob/api/models/payroll_category'
 require 'myob/api/models/wage'
