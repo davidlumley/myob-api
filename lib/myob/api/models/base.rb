@@ -61,7 +61,7 @@ module Myob
           if self.model_route == ''
             "#{API_URL}"
           elsif object && object['UID']
-            "#{resource_url}/#{object['UID']}"
+            "#{resource_url}#{object['UID']}"
           else
             resource_url
           end
