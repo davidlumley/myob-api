@@ -23,6 +23,7 @@ require 'myob/api/models/inventory_item'
 
 require 'myob/api/models/invoice'
 require 'myob/api/models/invoice_item'
+require 'myob/api/models/invoice_service'
 
 require 'myob/api/models/order'
 require 'myob/api/models/order_item'

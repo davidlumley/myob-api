@@ -29,6 +29,7 @@ module Myob
 
         model :Invoice
         model :InvoiceItem
+        model :InvoiceService
 
         model :Order
         model :OrderItem
