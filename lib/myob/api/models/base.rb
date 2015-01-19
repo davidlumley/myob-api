@@ -15,8 +15,8 @@ module Myob
           @model_name.to_s
         end
 
-        def all(query = nil)
-          perform_request(self.url, query)
+        def all(query = nil, modified_after = nil)
+          perform_request(self.url, query, modified_after)
         end
         
         def next_page?
@@ -24,11 +24,11 @@ module Myob
         end
         
         def next_page(query = nil)
-          perform_request(@next_page_link, query)
+          perform_request(@next_page_link, query, modified_after)
         end
 
-        def all_items(query = nil)
-          results = all(query)["Items"]
+        def all_items(query = nil, modified_after = nil)
+          results = all(query, modified_after)["Items"]
           while next_page?
             results += next_page(query)["Items"] || []
           end
@@ -102,7 +102,12 @@ module Myob
           "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}/"
         end
         
-        def perform_request(url, query = nil)
+        def perform_request(url, query = nil, modified_after = nil)
+          if modified_after
+            filter_param = CGI::escape("LastModified gt datetime'#{modified_after.strftime('%FT%T')}'")
+            url = "#{url}?$filter=#{filter_param}"
+          end
+
           model_data = parse_response(@client.connection.get(url, {:headers => @client.headers}))
           @next_page_link = model_data['NextPageLink'] if self.model_route != ''
 
