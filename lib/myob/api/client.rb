@@ -9,28 +9,7 @@ module Myob
       attr_reader :current_company_file, :client
 
       def initialize(options)
-        model :CompanyFile
-
-        model :CurrentUser
-        model :Company
-
-        model :Contact
-        model :Customer
-        model :Employee
-        model :EmployeePayrollDetail
-        model :EmployeeStandardPay
-
-        model :EmployeePayrollAdvice
-
-        model :Invoice
-        model :InvoiceItem
-
-        model :PayrollCategory
-        model :Wage
-
-        model :Timesheet
-
-        model :EmployeePayrollAdvice
+        Myob::Api::Model::Base.subclasses.each {|c| model(c.name.split("::").last)}
 
         @redirect_uri         = options[:redirect_uri]
         @consumer             = options[:consumer]

@@ -24,6 +24,8 @@ require 'myob/api/models/wage'
 
 require 'myob/api/models/timesheet'
 
+require 'myob/api/models/general_ledger'
+
 require 'myob/api/models/employee_payroll_advice'
 
 require 'myob/api/client'
