@@ -31,13 +31,13 @@ module Myob
         end
         
         def next_page(params = nil)
-          perform_request(@next_page_link, params)
+          perform_request(@next_page_link)
         end
 
         def all_items(params = nil)
           results = all(params)["Items"]
           while next_page?
-            results += next_page(params)["Items"] || []
+            results += next_page["Items"] || []
           end
           results
         end
