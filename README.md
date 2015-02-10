@@ -135,7 +135,15 @@ Basic pagination based on `NextPageLink` parameter returned via [API](http://dev
 
 You can also get an array of all items (which may make several API calls in the background):
 
-    api_client.contact.all_items # note this returns an array, *not* a hash the way `api_client.contact.all` does
+    api_client.contact.all_items # note this returns an array, *not* a hash the way `api_client.contact.all` does - use it if you only need data, without metadata
+
+#### Filtering
+
+You can use oData filters:
+
+    api_client.employee.all(filter: "IsActive eq true")
+
+See http://www.odata.org/documentation/odata-version-2-0/uri-conventions/ and http://developer.myob.com/api/accountright/api-overview/retrieving-data/ for information on oData filtering.
 
 #### Fetching one entity
 

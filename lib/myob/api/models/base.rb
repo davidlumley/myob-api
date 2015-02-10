@@ -4,6 +4,7 @@ module Myob
       class Base
 
         API_URL = 'https://api.myob.com/accountright/'
+        QUERY_OPTIONS = [:orderby, :top, :skip, :filter]
 
         def initialize(client, model_name)
           @client          = client
@@ -15,28 +16,30 @@ module Myob
           @model_name.to_s
         end
 
-        def all(query = nil)
-          perform_request(self.url, query)
+        def all(params = nil)
+          perform_request(self.url(nil, params))
+        end
+        alias_method :get, :all
+
+        def records(params = nil)
+          response = all(params)
+          response.is_a?(Hash) && response.key?('Items') ? response['Items'] : response
         end
         
         def next_page?
           !!@next_page_link
         end
         
-        def next_page(query = nil)
-          perform_request(@next_page_link, query)
+        def next_page(params = nil)
+          perform_request(@next_page_link, params)
         end
 
-        def all_items(query = nil)
-          results = all(query)["Items"]
+        def all_items(params = nil)
+          results = all(params)["Items"]
           while next_page?
-            results += next_page(query)["Items"] || []
+            results += next_page(params)["Items"] || []
           end
           results
-        end
-
-        def get(query = nil)
-          all(query)
         end
         
         def find(id)
@@ -44,9 +47,8 @@ module Myob
           perform_request(self.url(object))
         end
         
-        def first(query = nil)
-          model_data = self.all(query)
-          model_data[0] if model_data.length > 0
+        def first(params = nil)
+          all(params).first
         end
 
         def save(object)
@@ -57,14 +59,19 @@ module Myob
           @client.connection.delete(self.url(object), :headers => @client.headers)
         end
 
-        def url(object = nil)
-          if self.model_route == ''
+        def url(object = nil, params = nil)
+          url = if self.model_route == ''
             "#{API_URL}"
-          elsif object && object['UID']
-            "#{resource_url}/#{object['UID']}"
           else
-            resource_url
+            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}#{"/#{object['UID']}" if object && object['UID']}"
           end
+
+          if params.is_a?(Hash)
+            query = query_string(params)
+            url += "?#{query}" if !query.nil? && query.length > 0
+          end
+
+          url
         end
 
         def new_record?(object)
@@ -102,15 +109,27 @@ module Myob
           "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}"
         end
         
-        def perform_request(url, query = nil)
+        def perform_request(url)
           model_data = parse_response(@client.connection.get(url, {:headers => @client.headers}))
           @next_page_link = model_data['NextPageLink'] if self.model_route != ''
-          
-          if query
-            process_query(model_data, query)
-          else
-            model_data
-          end
+          model_data
+        end
+
+        def query_string(params)
+          params.map do |key, value|
+            if QUERY_OPTIONS.include?(key)
+              value = build_filter(value) if key == :filter
+              key = "$#{key}"
+            end
+
+            "#{key}=#{CGI.escape(value.to_s)}"
+          end.join('&')
+        end
+
+        def build_filter(value)
+          return value unless value.is_a?(Hash)
+
+          value.map { |key, value| "#{key} eq '#{value.to_s.gsub("'", %q(\\\'))}'" }.join(' and ')
         end
 
         def parse_response(response)
