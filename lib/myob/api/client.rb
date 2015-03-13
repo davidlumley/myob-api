@@ -25,6 +25,9 @@ module Myob
 
         model :EmployeePayrollAdvice
 
+        model :GeneralJournal
+        model :JournalTransaction
+
         model :InventoryItem
 
         model :Invoice
