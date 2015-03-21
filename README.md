@@ -36,7 +36,7 @@ The MYOB API uses 3 legged OAuth2. If you don't want to roll your own, or use th
       end
 
       def myob_client
-        @api_client = Myob::Api::Client.new({
+        @myob_client ||= Myob::Api::Client.new({
           :consumer => {
             :key    => YOUR_CONSUMER_KEY,
             :secret => YOUR_CONSUMER_SECRET,
@@ -160,7 +160,7 @@ To create a new entity, call #save on its model, passing through a hash that rep
 #### Updating an entity
 
 To update an existing entity, call #save on its model, passing through a hash you got from the API. This hash should include a `UID` parameter (which is included by default when you get the data).
-  
+
     user = api_client.employee.all["Items"].last
     user['FirstName'] = 'New First Name'
     api_client.employee.save(user)
