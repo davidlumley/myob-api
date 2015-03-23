@@ -4,8 +4,13 @@ module Myob
 
       attr_reader :params
 
-      def initialize
-        @params = {}
+      def initialize(model_class)
+        @model_class = model_class
+        @params      = {}
+      end
+
+      def all
+        @model_class.all(self)
       end
 
       def where(options)

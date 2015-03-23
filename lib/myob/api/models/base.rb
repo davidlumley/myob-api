@@ -4,7 +4,7 @@ module Myob
       class Base
 
         class << self
-          def all
+          def all(query)
             []
           end
         end
