@@ -10,7 +10,8 @@ class QueryTest < Minitest::Test
   }
 
   def setup
-    @query = Myob::Api::Query.new
+    @model_class = MiniTest::Mock.new
+    @query       = Myob::Api::Query.new(@model_class)
   end
 
   @queries.each do |query, condition|
@@ -22,6 +23,12 @@ class QueryTest < Minitest::Test
     define_method("test_#{query}_method_returns_query_class") do
       assert_kind_of Myob::Api::Query, @query.send(query.to_sym, condition)
     end
+  end
+
+  def test_all_method_calls_corresponding_model_method
+    @model_class.expect(:all, [], [@query])
+    @query.all
+    @model_class.verify
   end
 
 end
