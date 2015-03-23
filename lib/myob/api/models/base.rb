@@ -3,6 +3,12 @@ module Myob
     module Model
       class Base
 
+        class << self
+          def all
+            []
+          end
+        end
+
         def initialize(options)
         end
 
