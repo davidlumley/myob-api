@@ -5,12 +5,20 @@ module Myob
       extend Myob::Api::Helpers
 
       class << self
+
         def define_model_method(model_class)
           model_name = model_class.name.split('::').last
           define_method(underscore(model_name)) do
             Myob::Api::Query.new(model_class)
           end
         end
+
+        [
+          Myob::Api::Model::Contact,
+        ].each do |model_class|
+          Myob::Api::Client.define_model_method(model_class)
+        end
+        
       end
 
       def initialize(options)
