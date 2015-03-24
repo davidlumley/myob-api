@@ -13,6 +13,7 @@ class ClientTest < Minitest::Test
     @class.define_model_method(@model_class)
     @model_class.verify
     assert_respond_to @client, :test_model
+    assert_kind_of Myob::Api::Query, @client.test_model
   end
-
+  
 end
