@@ -12,4 +12,8 @@ class BaseTest < Minitest::Test
     assert_kind_of Array, @class.all(@query)
   end
 
+  def test_model_class_has_access_to_client_for_requests
+    assert_respond_to @class, :client
+  end
+
 end
