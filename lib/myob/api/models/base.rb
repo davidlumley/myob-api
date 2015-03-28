@@ -15,28 +15,28 @@ module Myob
           @model_name.to_s
         end
 
-        def all(query = nil, modified_after = nil)
-          perform_request(self.url, query, modified_after)
+        def all(opts={})
+          perform_request(self.url, opts)
         end
         
         def next_page?
           !!@next_page_link
         end
         
-        def next_page(query = nil)
-          perform_request(@next_page_link, query, modified_after)
+        def next_page(opts={})
+          perform_request(@next_page_link, opts)
         end
 
-        def all_items(query = nil, modified_after = nil)
-          results = all(query, modified_after)["Items"]
+        def all_items(opts={})
+          results = all(opts)["Items"]
           while next_page?
-            results += next_page(query)["Items"] || []
+            results += next_page(opts)["Items"] || []
           end
           results
         end
 
-        def get(query = nil)
-          all(query)
+        def get(opts={})
+          all(opts)
         end
         
         def find(id)
@@ -44,8 +44,8 @@ module Myob
           perform_request(self.url(object))
         end
         
-        def first(query = nil)
-          model_data = self.all(query)
+        def first(opts={})
+          model_data = self.all(opts)
           model_data[0] if model_data.length > 0
         end
 
@@ -61,7 +61,7 @@ module Myob
           if self.model_route == ''
             "#{API_URL}"
           elsif object && object['UID']
-            "#{resource_url}#{object['UID']}"
+            "#{resource_url}/#{object['UID']}"
           else
             resource_url
           end
@@ -99,20 +99,25 @@ module Myob
         end
         
         def resource_url
-          "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}/"
+          "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}"
         end
         
-        def perform_request(url, query = nil, modified_after = nil)
-          if modified_after
-            filter_param = CGI::escape("LastModified gt datetime'#{modified_after.strftime('%FT%T')}'")
-            url = "#{url}?$filter=#{filter_param}"
+        def perform_request(url, opts={})
+          params = {}
+          params['$filter'] = CGI::escape(opts[:filter]) if opts[:filter]
+          params['$top'] = CGI::escape(opts[:top]) if opts[:top]
+          params['$skip'] = CGI::escape(opts[:skip]) if opts[:skip]
+          params['$orderby'] = CGI::escape(opts[:orderby]) if opts[:orderby]
+
+          unless params.empty?
+            url = "#{url}?#{params.map{|k,v| [CGI.escape(k.to_s), "=", CGI.escape(v.to_s)]}.map(&:join).join("&")}"
           end
 
           model_data = parse_response(@client.connection.get(url, {:headers => @client.headers}))
           @next_page_link = model_data['NextPageLink'] if self.model_route != ''
 
-          if query
-            process_query(model_data, query)
+          if opts[:query]
+            process_query(model_data, opts[:query])
           else
             model_data
           end

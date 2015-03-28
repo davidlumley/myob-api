@@ -80,7 +80,8 @@ module Myob
           'x-myobapi-key'     => @consumer[:key],
           'x-myobapi-version' => 'v2',
           'x-myobapi-cftoken' => @current_company_file[:token] || '',
-          'Content-Type'      => 'application/json'
+          'Content-Type'      => 'application/json',
+          'Accept'            => 'application/json'
         }
       end
 
