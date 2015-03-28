@@ -36,11 +36,11 @@ The MYOB API uses 3 legged OAuth2. If you don't want to roll your own, or use th
       end
 
       def myob_client
-        @api_client = Myob::Api::Client.new({
+        @myob_client ||= Myob::Api::Client.new({
           :consumer => {
             :key    => YOUR_CONSUMER_KEY,
             :secret => YOUR_CONSUMER_SECRET,
-          },
+          }
         })
       end
     end
@@ -52,9 +52,9 @@ Create an api_client:
     api_client = Myob::Api::Client.new({
       :consumer => {
         :key    => YOUR_CONSUMER_KEY,
-        :secret => YOUR_CONSUMER_SECRET,
+        :secret => YOUR_CONSUMER_SECRET
       },
-      :access_token => YOUR_OAUTH_ACCESS_TOKEN,
+      :access_token => YOUR_OAUTH_ACCESS_TOKEN
     })
 
 If you have a refresh token (the Myob API returns one by default) you can use that too:
@@ -62,10 +62,10 @@ If you have a refresh token (the Myob API returns one by default) you can use th
     api_client = Myob::Api::Client.new({
       :consumer => {
         :key    => YOUR_CONSUMER_KEY,
-        :secret => YOUR_CONSUMER_SECRET,
+        :secret => YOUR_CONSUMER_SECRET
       },
       :access_token  => YOUR_OAUTH_ACCESS_TOKEN,
-      :refresh_token => YOUR_OAUTH_REFRESH_TOKEN,
+      :refresh_token => YOUR_OAUTH_REFRESH_TOKEN
     })
 
 Or if you know which Company File you want to access too:
@@ -73,15 +73,15 @@ Or if you know which Company File you want to access too:
     api_client = Myob::Api::Client.new({
       :consumer => {
         :key    => YOUR_CONSUMER_KEY,
-        :secret => YOUR_CONSUMER_SECRET,
+        :secret => YOUR_CONSUMER_SECRET
       },
       :access_token  => YOUR_OAUTH_ACCESS_TOKEN,
       :refresh_token => YOUR_OAUTH_REFRESH_TOKEN,
       :company_file  => {
         :name     => COMPANY_FILE_NAME,
         :username => COMPANY_FILE_USERNAME,
-        :password => COMPANY_FILE_PASSWORD,
-      },
+        :password => COMPANY_FILE_PASSWORD
+      }
     })
 
 ### API Methods
@@ -99,7 +99,7 @@ Select a company file to work with
     api_client.select_company_file({
       :id       => COMPANY_FILE_ID,
       :username => COMPANY_FILE_USERNAME,
-      :password => COMPANY_FILE_PASSWORD,
+      :password => COMPANY_FILE_PASSWORD
     })
 
 ####  Contacts
@@ -135,7 +135,17 @@ Basic pagination based on `NextPageLink` parameter returned via [API](http://dev
 
 You can also get an array of all items (which may make several API calls in the background):
 
-    api_client.contact.all_items # note this returns an array, *not* a hash the way `api_client.contact.all` does
+    api_client.contact.all_items # note this returns an array, *not* a hash the way `api_client.contact.all` does - use it if you only need data, without metadata
+
+#### Filtering
+
+You can use oData filters:
+
+    api_client.employee.all(filter: "IsActive eq true")
+    api_client.employee.all(filter: {'IsActive' => true, 'Category' => 'Individual'})
+    api_client.employee.all(top: 10, skip: 10)
+
+See http://www.odata.org/documentation/odata-version-2-0/uri-conventions/ and http://developer.myob.com/api/accountright/api-overview/retrieving-data/ for information on oData filtering.
 
 #### Fetching one entity
 
@@ -152,7 +162,7 @@ To create a new entity, call #save on its model, passing through a hash that rep
 #### Updating an entity
 
 To update an existing entity, call #save on its model, passing through a hash you got from the API. This hash should include a `UID` parameter (which is included by default when you get the data).
-  
+
     user = api_client.employee.all["Items"].last
     user['FirstName'] = 'New First Name'
     api_client.employee.save(user)

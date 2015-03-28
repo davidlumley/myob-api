@@ -9,43 +9,7 @@ module Myob
       attr_reader :current_company_file, :client
 
       def initialize(options)
-        model :CompanyFile
-
-        model :CurrentUser
-        model :Company
-
-        model :Contact
-        model :Customer
-        model :Supplier
-        model :Employee
-        model :CustomerPayment
-        model :SupplierPayment
-        model :EmployeePayrollDetail
-        model :EmployeeStandardPay
-
-        model :EmployeePayrollAdvice
-
-        model :GeneralJournal
-        model :JournalTransaction
-
-        model :InventoryItem
-
-        model :Invoice
-        model :InvoiceItem
-        model :InvoiceService
-
-        model :Order
-        model :OrderItem
-
-        model :PayrollCategory
-        model :Wage
-
-        model :Timesheet
-
-        model :EmployeePayrollAdvice
-
-        model :TaxCode
-        model :Account
+        ObjectSpace.each_object(Class).select{|klass| klass < Myob::Api::Model::Base}.each{|c| model(c.name.split("::").last)}
 
         @redirect_uri         = options[:redirect_uri]
         @consumer             = options[:consumer]

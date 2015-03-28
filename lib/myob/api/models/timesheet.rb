@@ -14,7 +14,7 @@ module Myob
 
         # a timesheet is identified based on an employee UID as well as its start and end date
         # it does not have a UID of its own
-        def url(object = nil)
+        def url(object = nil, params = nil)
           if object
             "#{super()}/#{object['Employee']['UID']}?StartDate=#{object['StartDate']}&EndDate=#{object['EndDate']}"
           else

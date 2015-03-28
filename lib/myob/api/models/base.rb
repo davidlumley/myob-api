@@ -4,6 +4,7 @@ module Myob
       class Base
 
         API_URL = 'https://api.myob.com/accountright/'
+        QUERY_OPTIONS = [:orderby, :top, :skip, :filter]
 
         def initialize(client, model_name)
           @client          = client
@@ -34,10 +35,6 @@ module Myob
           end
           results
         end
-
-        def get(opts={})
-          all(opts)
-        end
         
         def find(id)
           object = { 'UID' => id }
@@ -45,8 +42,7 @@ module Myob
         end
         
         def first(opts={})
-          model_data = self.all(opts)
-          model_data[0] if model_data.length > 0
+          all(opts).first
         end
 
         def save(object)
@@ -103,14 +99,10 @@ module Myob
         end
         
         def perform_request(url, opts={})
-          params = {}
-          params['$filter'] = CGI::escape(opts[:filter]) if opts[:filter]
-          params['$top'] = CGI::escape(opts[:top]) if opts[:top]
-          params['$skip'] = CGI::escape(opts[:skip]) if opts[:skip]
-          params['$orderby'] = CGI::escape(opts[:orderby]) if opts[:orderby]
-
+          params = Hash[opts.select{|k,v| QUERY_OPTIONS.include?(k)}.map{|k,v| ["$#{k}", build_filter(v)]}]
           unless params.empty?
-            url = "#{url}?#{params.map{|k,v| [CGI.escape(k.to_s), "=", CGI.escape(v.to_s)]}.map(&:join).join("&")}"
+            params_string = params.map{|k,v| "#{k}=#{v}"}.join("&")
+            url = "#{url}?#{params_string}"
           end
 
           model_data = parse_response(@client.connection.get(url, {:headers => @client.headers}))
@@ -121,6 +113,11 @@ module Myob
           else
             model_data
           end
+        end
+
+        def build_filter(value)
+          return CGI::escape(value.to_s) unless value.is_a?(Hash)
+          CGI::escape(value.map {|key, value| "#{key} eq '#{value.to_s.gsub("'", %q(\\\'))}'"}.join(' and '))
         end
 
         def parse_response(response)

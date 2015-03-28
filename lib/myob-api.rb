@@ -19,6 +19,7 @@ require 'myob/api/models/employee_standard_pay'
 
 require 'myob/api/models/employee_payroll_advice'
 
+require 'myob/api/models/general_ledger'
 require 'myob/api/models/general_journal'
 require 'myob/api/models/journal_transaction'
 
@@ -38,5 +39,7 @@ require 'myob/api/models/timesheet'
 
 require 'myob/api/models/tax_code'
 require 'myob/api/models/account'
+
+require 'myob/api/models/employee_payroll_advice'
 
 require 'myob/api/client'

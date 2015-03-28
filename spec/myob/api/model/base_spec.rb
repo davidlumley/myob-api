@@ -19,17 +19,27 @@ describe Myob::Api::Model::Base do
       it "fetches all the objects pages" do
         stub_request(:get, "https://api.myob.com/accountright/123/base").with(:headers => expected_header).to_return(:status => 200, :body => page1)
         stub_request(:get, "https://api.myob.com/accountright/123/base$top=2&$skip=2").with(:headers => expected_header).to_return(:status => 200, :body => page2)
-        
+
         actual_iems = subject.all_items
         
         expect(actual_iems).to eql([{'UID' => '1'}, {'UID' => '2'}, {'UID' => '3'}, {'UID' => '4'}])
       end
 
-      it "fetches all the objects pages with filter options" do
-        last_modified = DateTime.parse('2015-03-29T03:31:57.19')
-        opts = {filter: "LastModified gt datetime'#{last_modified.strftime('%FT%T')}'"}
+      it "fetches all the objects pages with filter string" do
+        opts = {filter: "LastModified gt datetime'2015-03-29T03:31:57.19'"}
 
-        stub_request(:get, "https://api.myob.com/accountright/123/base?$filter=LastModified%2Bgt%2Bdatetime%25272015-03-29T03%253A31%253A57%2527")
+        stub_request(:get, "https://api.myob.com/accountright/123/base?$filter=LastModified%20gt%20datetime%272015-03-29T03%3A31%3A57.19%27")
+          .with(:headers => expected_header).to_return(:status => 200, :body => page2)
+        
+        filtered_iems = subject.all_items(opts)
+        
+        expect(filtered_iems).to eql([{'UID' => '3'}, {'UID' => '4'}])
+      end
+
+      it "fetches all the objects pages with filter options" do
+        opts = {filter: {'type' => 'Customer', 'category' => 'Individual'}}
+
+        stub_request(:get, "https://api.myob.com/accountright/123/base?$filter=type%20eq%20'Customer'%20and%20category%20eq%20'Individual'")
           .with(:headers => expected_header).to_return(:status => 200, :body => page2)
         
         filtered_iems = subject.all_items(opts)
