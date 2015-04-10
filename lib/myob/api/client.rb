@@ -50,7 +50,7 @@ module Myob
       end
 
       def select_company_file(company_file)
-        company_file_id = self.company_file.first('Name' => company_file[:name])['Id']
+        company_file_id = self.company_file.first(query: {'Name' => company_file[:name]})['Id']
         @current_company_file = {
           :id    => company_file_id,
           :token => company_file[:token] || Base64.encode64("#{company_file[:username]}:#{company_file[:password]}"),
