@@ -16,28 +16,22 @@ module Myob
           @model_name.to_s
         end
 
-        def all(params = nil)
-          perform_request(self.url(nil, params))
-        end
-        alias_method :get, :all
-
-        def records(params = nil)
-          response = all(params)
-          response.is_a?(Hash) && response.key?('Items') ? response['Items'] : response
+        def all(opts={})
+          perform_request(self.url, opts)
         end
         
         def next_page?
           !!@next_page_link
         end
         
-        def next_page(params = nil)
-          perform_request(@next_page_link)
+        def next_page(opts={})
+          perform_request(@next_page_link, opts)
         end
 
-        def all_items(params = nil)
-          results = all(params)["Items"]
+        def all_items(opts={})
+          results = all(opts)["Items"]
           while next_page?
-            results += next_page["Items"] || []
+            results += next_page(opts)["Items"] || []
           end
           results
         end
@@ -47,8 +41,8 @@ module Myob
           perform_request(self.url(object))
         end
         
-        def first(params = nil)
-          all(params).first
+        def first(opts={})
+          all(opts).first
         end
 
         def save(object)
@@ -59,19 +53,14 @@ module Myob
           @client.connection.delete(self.url(object), :headers => @client.headers)
         end
 
-        def url(object = nil, params = nil)
-          url = if self.model_route == ''
+        def url(object = nil)
+          if self.model_route == ''
             "#{API_URL}"
+          elsif object && object['UID']
+            "#{resource_url}/#{object['UID']}"
           else
-            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}#{"/#{object['UID']}" if object && object['UID']}"
+            resource_url
           end
-
-          if params.is_a?(Hash)
-            query = query_string(params)
-            url += "?#{query}" if !query.nil? && query.length > 0
-          end
-
-          url
         end
 
         def new_record?(object)
@@ -109,27 +98,26 @@ module Myob
           "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}"
         end
         
-        def perform_request(url)
+        def perform_request(url, opts={})
+          params = Hash[opts.select{|k,v| QUERY_OPTIONS.include?(k)}.map{|k,v| ["$#{k}", build_filter(v)]}]
+          unless params.empty?
+            params_string = params.map{|k,v| "#{k}=#{v}"}.join("&")
+            url = "#{url}?#{params_string}"
+          end
+
           model_data = parse_response(@client.connection.get(url, {:headers => @client.headers}))
           @next_page_link = model_data['NextPageLink'] if self.model_route != ''
-          model_data
-        end
 
-        def query_string(params)
-          params.map do |key, value|
-            if QUERY_OPTIONS.include?(key)
-              value = build_filter(value) if key == :filter
-              key = "$#{key}"
-            end
-
-            "#{key}=#{CGI.escape(value.to_s)}"
-          end.join('&')
+          if opts[:query]
+            process_query(model_data, opts[:query])
+          else
+            model_data
+          end
         end
 
         def build_filter(value)
-          return value unless value.is_a?(Hash)
-
-          value.map { |key, value| "#{key} eq '#{value.to_s.gsub("'", %q(\\\'))}'" }.join(' and ')
+          return CGI::escape(value.to_s) unless value.is_a?(Hash)
+          CGI::escape(value.map {|key, value| "#{key} eq '#{value.to_s.gsub("'", %q(\\\'))}'"}.join(' and '))
         end
 
         def parse_response(response)

@@ -9,7 +9,7 @@ module Myob
       attr_reader :current_company_file, :client
 
       def initialize(options)
-        Myob::Api::Model::Base.subclasses.each {|c| model(c.name.split("::").last)}
+        ObjectSpace.each_object(Class).select{|klass| klass < Myob::Api::Model::Base}.each{|c| model(c.name.split("::").last)}
 
         @redirect_uri         = options[:redirect_uri]
         @consumer             = options[:consumer]
@@ -44,23 +44,32 @@ module Myob
           'x-myobapi-key'     => @consumer[:key],
           'x-myobapi-version' => 'v2',
           'x-myobapi-cftoken' => @current_company_file[:token] || '',
-          'Content-Type'      => 'application/json'
+          'Content-Type'      => 'application/json',
+          'Accept'            => 'application/json'
         }
       end
 
       def select_company_file(company_file)
-        company_file_id = self.company_file.first('Name' => company_file[:name])['Id']
+        company_file_id = self.company_file.first(query: {'Name' => company_file[:name]})['Id']
         @current_company_file = {
           :id    => company_file_id,
           :token => company_file[:token] || Base64.encode64("#{company_file[:username]}:#{company_file[:password]}"),
         }
       end
 
+      def refresh!
+        @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token, {
+          :refresh_token => @refresh_token
+        })
+
+        @auth_connection.refresh!
+      end
+
       def connection
         if @refresh_token
           @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token, {
             :refresh_token => @refresh_token
-          }).refresh!
+          })
         else
           @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token)
         end
