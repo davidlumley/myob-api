@@ -29,7 +29,8 @@ module Myob
         end
 
         def all_items(opts={})
-          results = all(opts)["Items"]
+          collection = all(opts)
+          results = collection["Items"] ? collection["Items"] : [collection]
           while next_page?
             results += next_page(opts)["Items"] || []
           end
@@ -99,20 +100,25 @@ module Myob
         end
         
         def perform_request(url, opts={})
+          # Build URL with parameters
           params = Hash[opts.select{|k,v| QUERY_OPTIONS.include?(k)}.map{|k,v| ["$#{k}", build_filter(v)]}]
           unless params.empty?
             params_string = params.map{|k,v| "#{k}=#{v}"}.join("&")
             url = "#{url}?#{params_string}"
           end
 
-          model_data = parse_response(@client.connection.get(url, {:headers => @client.headers}))
-          @next_page_link = model_data['NextPageLink'] if self.model_route != ''
+          # Add extra headers to request
+          headers = @client.headers
+          headers = headers.merge(opts[:headers]) if opts[:headers]
 
-          if opts[:query]
-            process_query(model_data, opts[:query])
-          else
-            model_data
-          end
+          # Perform request
+          response_headers, model_data = parse_response(@client.connection.get(url, {:headers => headers}))
+          @next_page_link = model_data['NextPageLink'] if self.model_route != ''
+          # Keep response headers including Etag
+          opts[:response_headers] ||= response_headers
+
+          # Filter results if required and return data
+          opts[:query] ? process_query(model_data, opts[:query]) : model_data
         end
 
         def build_filter(value)
@@ -121,7 +127,16 @@ module Myob
         end
 
         def parse_response(response)
-          JSON.parse(response.body)
+          if response.status < 300
+            # Success response, parse JSON response
+            return response.headers, JSON.parse(response.body)
+          elsif response.status == 304
+            # Unmodified content
+            return response.headers, {"Items" => []}
+          else
+            # Error
+            return response.headers, JSON.parse(response.body)
+          end
         end
 
         def process_query(data, query)
