@@ -13,9 +13,7 @@ module Myob
         end
 
         def models
-          @models ||= [
-            Myob::Api::Model::Contact,
-          ]
+          @models ||= ObjectSpace.each_object(Class).select{|klass| klass < Myob::Api::Model::Base}
         end
       end
 
