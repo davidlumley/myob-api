@@ -40,20 +40,35 @@ module Myob
       end
 
       def headers
-        {
-          'x-myobapi-key'     => @consumer[:key],
-          'x-myobapi-version' => 'v2',
-          'x-myobapi-cftoken' => @current_company_file[:token] || '',
-          'Content-Type'      => 'application/json'
-        }
+        token = @current_company_file[:token]
+        if token.nil? || token == ''
+          # if token is blank assume we are using federated login - http://myobapi.tumblr.com/post/109848079164/2015-1-release-notes
+          {
+            'x-myobapi-key'     => @consumer[:key],
+            'x-myobapi-version' => 'v2',
+            'Content-Type'      => 'application/json'
+          }
+        else
+          {
+            'x-myobapi-key'     => @consumer[:key],
+            'x-myobapi-version' => 'v2',
+            'x-myobapi-cftoken' => token,
+            'Content-Type'      => 'application/json'
+          }
+        end
       end
 
       def select_company_file(company_file)
         company_file_id = (self.company_file.all.find {|file| file['Name'] == company_file[:name]} || [])['Id']
         if company_file_id
+          token = company_file[:token]
+          if (!token || token == '') && company_file[:username] && company_file[:username] != '' && company_file[:password] && company_file[:password] != ''
+            # if we have been given login details, encode them into a token
+            token = Base64.encode64("#{company_file[:username]}:#{company_file[:password]}")
+          end
           @current_company_file = {
             :id    => company_file_id,
-            :token => company_file[:token] || Base64.encode64("#{company_file[:username]}:#{company_file[:password]}"),
+            :token => token
           }
         end
       end
