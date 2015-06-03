@@ -62,7 +62,7 @@ module Myob
         company_file_id = (self.company_file.all.find {|file| file['Name'] == company_file[:name]} || [])['Id']
         if company_file_id
           token = company_file[:token]
-          if (!token || token == '') && company_file[:username] && company_file[:username] != '' && company_file[:password] && company_file[:password] != ''
+          if (token.nil? || token == '') && !company_file[:username].nil? && company_file[:username] != '' && !company_file[:password].nil?
             # if we have been given login details, encode them into a token
             token = Base64.encode64("#{company_file[:username]}:#{company_file[:password]}")
           end
