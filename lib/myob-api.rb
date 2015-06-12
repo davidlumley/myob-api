@@ -24,6 +24,8 @@ require 'myob/api/models/general_journal'
 require 'myob/api/models/journal_transaction'
 
 require 'myob/api/models/inventory_item'
+require 'myob/api/models/inventory_adjustment'
+
 require 'myob/api/models/time_billing_activity'
 
 require 'myob/api/models/invoice'
