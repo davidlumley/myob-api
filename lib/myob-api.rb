@@ -41,6 +41,12 @@ require 'myob/api/models/order_item'
 
 require 'myob/api/models/payroll_category'
 require 'myob/api/models/wage'
+require 'myob/api/models/entitlement'
+require 'myob/api/models/deduction'
+require 'myob/api/models/expense'
+require 'myob/api/models/superannuation'
+require 'myob/api/models/tax'
+require 'myob/api/models/tax_table'
 
 require 'myob/api/models/timesheet'
 
