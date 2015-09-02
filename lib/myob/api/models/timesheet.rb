@@ -12,6 +12,10 @@ module Myob
           false
         end
 
+        def for(user_id, start_date, end_date)
+          self.send(:perform_request, url({'Employee' => {'UID' => user_id}, 'StartDate' => start_date, 'EndDate' => end_date}))
+        end
+
         # a timesheet is identified based on an employee UID as well as its start and end date
         # it does not have a UID of its own
         def url(object = nil, params = nil)
