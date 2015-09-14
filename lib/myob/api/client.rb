@@ -8,7 +8,7 @@ module Myob
 
       attr_reader :current_company_file, :client
 
-      def initialize(options)
+      def initialize(options, &block)
         Myob::Api::Model::Base.subclasses.each {|c| model(c.name.split("::").last)}
 
         @redirect_uri         = options[:redirect_uri]
@@ -20,7 +20,7 @@ module Myob
           :site          => 'https://secure.myob.com',
           :authorize_url => '/oauth2/account/authorize',
           :token_url     => '/oauth2/v1/authorize',
-        })
+        }, &block)
 
         if options[:company_file]
           @current_company_file = select_company_file(options[:company_file])
