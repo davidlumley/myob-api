@@ -59,7 +59,7 @@ module Myob
       end
 
       def select_company_file(company_file)
-        company_file_id = (self.company_file.all.find {|file| file['Name'] == company_file[:name]} || [])['Id']
+        company_file_id = (company_files.find {|file| file['Name'] == company_file[:name]} || [])['Id']
         if company_file_id
           token = company_file[:token]
           if (token.nil? || token == '') && !company_file[:username].nil? && company_file[:username] != '' && !company_file[:password].nil?
@@ -83,6 +83,10 @@ module Myob
         end
       end
 
+      private
+      def company_files
+        @company_files ||= self.company_file.all.to_a
+      end
     end
   end
 end
