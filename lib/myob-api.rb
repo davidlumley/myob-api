@@ -39,6 +39,12 @@ require 'myob/api/models/bill_service'
 require 'myob/api/models/order'
 require 'myob/api/models/order_item'
 
+require 'myob/api/models/credit_settlement.rb'
+require 'myob/api/models/credit_refund.rb'
+
+require 'myob/api/models/debit_settlement.rb'
+require 'myob/api/models/debit_refund.rb'
+
 require 'myob/api/models/payroll_category'
 require 'myob/api/models/wage'
 require 'myob/api/models/entitlement'
