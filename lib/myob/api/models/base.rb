@@ -3,7 +3,7 @@ module Myob
     module Model
       class Base
 
-        API_URL = 'https://api.myob.com/accountright/'
+        API_URL = 'https://api.myob.com/accountright/' # deprecated except for initial requests - should read from API instead - http://myobapi.tumblr.com/post/141169146113/important-update-accountright-live-cloud-api
         QUERY_OPTIONS = [:orderby, :top, :skip, :filter]
 
         def initialize(client, model_name)
@@ -61,9 +61,13 @@ module Myob
 
         def url(object = nil, params = nil)
           url = if self.model_route == ''
-            "#{API_URL}"
+            API_URL
           else
-            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}#{"/#{object['UID']}" if object && object['UID']}"
+            if @client && @client.current_company_file_url
+              "#{@client.current_company_file_url}/#{self.model_route}"
+            else
+              "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}#{"/#{object['UID']}" if object && object['UID']}"
+            end
           end
 
           if params.is_a?(Hash)
@@ -106,7 +110,11 @@ module Myob
         end
         
         def resource_url
-          "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}"
+          if @client && @client.current_company_file_url
+            "#{@client.current_company_file_url}/#{self.model_route}"
+          else
+            "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}"
+          end
         end
         
         def perform_request(url)

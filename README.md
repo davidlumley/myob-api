@@ -84,6 +84,8 @@ Or if you know which Company File you want to access too:
       },
     })
 
+If you provide a company file, the gem will attempt to connect to MYOB to get the base API subdomain to use for future requests ([learn more](http://developer.myob.com/api/accountright/best-practice-guides/hypermedia-and-uris/)).
+
 ### API Methods
 
 #### Company Files
