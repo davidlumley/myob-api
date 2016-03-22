@@ -25,6 +25,7 @@ module Myob
         # on client init, if we have a company file already, get the appropriate base URL for this company file from MYOB
         provided_company_file = options[:selected_company_file] || options[:company_file]
         select_company_file(provided_company_file) if provided_company_file
+        @current_company_file ||= {}
       end
 
       def get_access_code_url(params = {})
@@ -89,6 +90,8 @@ module Myob
             :token => token
           }
           @current_company_file_url = selected_company_file['Uri']
+        else
+          @current_company_file = {}
         end
       end
 

@@ -64,7 +64,7 @@ module Myob
             API_URL
           else
             if @client && @client.current_company_file_url
-              "#{@client.current_company_file_url}/#{self.model_route}"
+              "#{@client.current_company_file_url}/#{self.model_route}#{"/#{object['UID']}" if object && object['UID']}"
             else
               "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}#{"/#{object['UID']}" if object && object['UID']}"
             end
