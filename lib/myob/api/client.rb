@@ -17,9 +17,10 @@ module Myob
         @refresh_token        = options[:refresh_token]
         @current_company_file = options[:selected_company_file] || {}
         @client               = OAuth2::Client.new(@consumer[:key], @consumer[:secret], {
-          :site          => 'https://secure.myob.com',
-          :authorize_url => '/oauth2/account/authorize',
-          :token_url     => '/oauth2/v1/authorize',
+          site:          'https://secure.myob.com',
+          authorize_url: '/oauth2/account/authorize',
+          token_url:     '/oauth2/v1/authorize',
+          connection_opts: {request: {timeout: options[:timeout] || 300}}
         })
 
         if options[:company_file]
@@ -74,7 +75,6 @@ module Myob
           @auth_connection ||= OAuth2::AccessToken.new(@client, @access_token)
         end
       end
-
     end
   end
 end
