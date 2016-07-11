@@ -19,11 +19,11 @@ module Myob
         def all(opts={})
           perform_request(self.url, opts)
         end
-        
+
         def next_page?
           !!@next_page_link
         end
-        
+
         def next_page(opts={})
           perform_request(@next_page_link, opts)
         end
@@ -32,16 +32,16 @@ module Myob
           collection = all(opts)
           results = collection["Items"] ? collection["Items"] : [collection]
           while next_page?
-            results += next_page(opts)["Items"] || []
+            results += next_page["Items"] || []
           end
           results
         end
-        
+
         def find(id)
           object = { 'UID' => id }
           perform_request(self.url(object))
         end
-        
+
         def first(opts={})
           all(opts).first
         end
@@ -94,11 +94,11 @@ module Myob
         def date_formatter
           "%Y-%m-%dT%H:%M:%S"
         end
-        
+
         def resource_url
           "#{API_URL}#{@client.current_company_file[:id]}/#{self.model_route}"
         end
-        
+
         def perform_request(url, opts={})
           # Build URL with parameters
           params = Hash[opts.select{|k,v| QUERY_OPTIONS.include?(k)}.map{|k,v| ["$#{k}", build_filter(v)]}]
