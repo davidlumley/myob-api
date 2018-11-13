@@ -6,6 +6,12 @@ module Myob
             'Inventory/Adjustment'
           end
         end
+          
+        class InventoryItems < Base
+          def model_route
+            'Inventory/Item'
+          end
+        end  
       end
     end
   end
