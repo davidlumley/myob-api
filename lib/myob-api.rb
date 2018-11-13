@@ -5,7 +5,7 @@ require 'myob/api/helpers'
 require 'myob/api/models/base'
 require 'myob/api/models/company_file'
 require 'myob/api/models/company'
-
+require 'myob/api/models/inventory'
 require 'myob/api/models/current_user'
 
 require 'myob/api/models/contact'
