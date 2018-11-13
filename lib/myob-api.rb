@@ -7,7 +7,7 @@ require 'myob/api/models/company_file'
 require 'myob/api/models/company'
 require 'myob/api/models/inventory'
 require 'myob/api/models/current_user'
-
+require 'myob/api/models/purchase'
 require 'myob/api/models/contact'
 require 'myob/api/models/customer'
 require 'myob/api/models/employee'
