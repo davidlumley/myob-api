@@ -43,6 +43,12 @@ module Myob
         end
       end
 
+      class Currency < Base
+        def model_route
+          'GeneralLedger/Currency'
+        end
+      end
+
       class GeneralJournal < Base
         def model_route
           'GeneralLedger/GeneralJournal'
