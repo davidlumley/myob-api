@@ -1,6 +1,6 @@
 # MYOB Api
 
-[MYOB Api](https://github.com/davidlumley/myob-api) is an interface for accessing [MYOB](http://developer.myob.com/api/accountright/v2/)'s  AccountRight Live API.
+[MYOB Api](https://github.com/davidlumley/myob-api) is an interface for accessing [MYOB](http://developer.myob.com/api/accountright/v2/)'s AccountRight Live API.
 
 ## Installation
 
@@ -24,12 +24,12 @@ If you've already got an OAuth access token, feel free to skip to API Client Set
 
 The MYOB API uses 3 legged OAuth2. If you don't want to roll your own, or use the [OmniAuth strategy](https://github.com/davidlumley/omniauth-myob) you can authenticate using the `get_access_code_url` and `get_access_token` methods that [ghiculescu](https://github.com/ghiculescu) has provided like so:
 
-    class MYOBSessionController  
+    class MYOBSessionController
       def new
         redirect_to myob_client.get_access_code_url
       end
 
-      def create
+      def callback
         @token         = myob_client.get_access_token(params[:code])
         @company_files = myob_client.company_file.all
         # then show the user a view where they can log in to their company file
@@ -41,7 +41,12 @@ The MYOB API uses 3 legged OAuth2. If you don't want to roll your own, or use th
             :key    => YOUR_CONSUMER_KEY,
             :secret => YOUR_CONSUMER_SECRET,
           },
+          :redirect_uri => redirect_uri
         })
+      end
+
+      def redirect_uri
+        callback_myob_session_url
       end
     end
 
@@ -104,7 +109,7 @@ Select a company file to work with
       :password => COMPANY_FILE_PASSWORD,
     })
 
-####  Contacts
+#### Contacts
 
 Return a list of all contacts
 
@@ -167,13 +172,11 @@ To update an existing entity, call #save on its model, passing through a hash yo
     user['FirstName'] = 'New First Name'
     api_client.employee.save(user)
 
-
 ## Todo
 
-* Expand API methods
-* Refactor client factory architecture
-* Tests
-
+- Expand API methods
+- Refactor client factory architecture
+- Tests
 
 ## Contributing
 
