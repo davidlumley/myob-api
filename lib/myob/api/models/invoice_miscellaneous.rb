@@ -1,7 +1,7 @@
 module Myob
   module Api
     module Model
-      class InvoiceService < Base
+      class InvoiceMiscellaneous < Base
         def model_route
           'Sale/Invoice/Miscellaneous'
         end
