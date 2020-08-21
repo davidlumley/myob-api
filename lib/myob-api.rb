@@ -7,6 +7,7 @@ require 'myob/api/models/company_file'
 require 'myob/api/models/company'
 
 require 'myob/api/models/current_user'
+require 'myob/api/models/superannuation_fund'
 
 require 'myob/api/models/contact'
 require 'myob/api/models/customer'
