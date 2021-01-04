@@ -9,7 +9,9 @@ module Myob
       attr_reader :current_company_file, :client, :current_company_file_url
 
       def initialize(options)
-        Myob::Api::Model::Base.subclasses.each {|c| model(c.name.split("::").last)}
+        Myob::Api::Model::Base.descendants.each do |klass|
+          model klass.name.split("::").last
+        end
 
         @redirect_uri         = options[:redirect_uri]
         @consumer             = options[:consumer]
