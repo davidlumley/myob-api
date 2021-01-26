@@ -8,7 +8,7 @@ module Myob
 
       attr_reader :current_company_file, :client, :current_company_file_url
 
-      def initialize(options)
+      def initialize(options, &block)
         Myob::Api::Model::Base.subclasses.each {|c| model(c.name.split("::").last)}
 
         @redirect_uri         = options[:redirect_uri]
@@ -20,7 +20,7 @@ module Myob
           :site          => 'https://secure.myob.com',
           :authorize_url => '/oauth2/account/authorize',
           :token_url     => '/oauth2/v1/authorize',
-        })
+        }, &block)
 
         # on client init, if we have a company file already, get the appropriate base URL for this company file from MYOB
         provided_company_file = options[:selected_company_file] || options[:company_file]
