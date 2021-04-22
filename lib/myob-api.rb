@@ -34,4 +34,6 @@ require 'myob/api/models/general_ledger'
 
 require 'myob/api/models/employee_payroll_advice'
 
+require 'myob/api/models/statement'
+
 require 'myob/api/client'
