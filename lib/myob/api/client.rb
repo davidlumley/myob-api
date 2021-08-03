@@ -83,7 +83,7 @@ module Myob
           token = company_file[:token]
           if (token.nil? || token == '') && !company_file[:username].nil? && company_file[:username] != '' && !company_file[:password].nil?
             # if we have been given login details, encode them into a token
-            token = Base64.encode64("#{company_file[:username]}:#{company_file[:password]}")
+            token = Base64.urlsafe_encode64("#{company_file[:username]}:#{company_file[:password]}")
           end
           @current_company_file = {
             :id    => selected_company_file['Id'],
